@@ -2,7 +2,7 @@ import java.util.AbstractList;
 import java.util.List;
 
 /**
- * Resizable-array implementation of the MyList interface.
+ * Resizable-array implementation of the List interface.
  * Permits all elements, including null. This class provides methods
  * to manipulate the size of the array that is used internally to store the list.
  * Note that this implementation is not synchronized.
