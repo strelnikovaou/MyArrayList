@@ -50,6 +50,7 @@ public class MyArrayList<E> extends AbstractList<E> implements List<E> {
 
     /**
      * Shows the number of elements in the list.
+     *
      * @return the number of elements in the list.
      */
     public int size() {
@@ -58,23 +59,24 @@ public class MyArrayList<E> extends AbstractList<E> implements List<E> {
 
     @SuppressWarnings("unchecked")
     private void growCapacity() {
-        final int s = size;
-        capacity = s + (s >> 1);
-        E[] newArray = (E[]) new Object[capacity];
-        System.arraycopy(array, 0, newArray, 0, s);
-        array = newArray;
+        if (capacity == size) {
+            final int s = size;
+            capacity = s + (s >> 1);
+            E[] newArray = (E[]) new Object[capacity];
+            System.arraycopy(array, 0, newArray, 0, s);
+            array = newArray;
+        }
     }
 
     /**
      * Appends the specified element to the end of this list.
+     *
      * @param element element to be appended to this list
      * @return true
      */
     @Override
     public boolean add(E element) {
-        if (capacity == size) {
-            growCapacity();
-        }
+        growCapacity();
         array[size++] = element;
         return true;
     }
@@ -82,17 +84,16 @@ public class MyArrayList<E> extends AbstractList<E> implements List<E> {
     /**
      * Inserts the specified element at the specified position in this
      * list.
+     *
      * @param index   index at which the specified element is to be inserted
      * @param element element to be inserted
      * @throws IndexOutOfBoundsException {@inheritDoc}
      */
     @Override
     public void add(int index, E element) {
-        if (index >= size || index < 0) {
-            throw new IndexOutOfBoundsException("Index: " + index + ", Array size: " + this.size);
-        } else if (capacity == size) {
-            growCapacity();
-        }
+        indexCheck(index);
+        growCapacity();
+
         System.arraycopy(array, index, array, index + 1, size - index);
         array[index] = element;
         size++;
@@ -100,17 +101,14 @@ public class MyArrayList<E> extends AbstractList<E> implements List<E> {
 
     /**
      * Replaces the element at the specified position in this list with the specified element.
+     *
      * @param index – index of the element to replace element – element to be stored at the specified position
-     * @throws IndexOutOfBoundsException {@inheritDoc}
      * @return element value
+     * @throws IndexOutOfBoundsException {@inheritDoc}
      */
     @Override
     public E set(int index, E element) {
-        if (index >= size || index < 0) {
-            throw new IndexOutOfBoundsException("Index: " + index + ", Array size: " + this.size);
-        } else if (capacity == size) {
-            growCapacity();
-        }
+        indexCheck(index);
         array[index] = element;
         return element;
     }
@@ -124,9 +122,7 @@ public class MyArrayList<E> extends AbstractList<E> implements List<E> {
      */
     @Override
     public E get(int index) {
-        if (index >= size || index < 0) {
-            throw new IndexOutOfBoundsException("Index: " + index + ", Array size: " + this.size);
-        }
+        indexCheck(index);
         return (E) array[index];
     }
 
@@ -135,15 +131,12 @@ public class MyArrayList<E> extends AbstractList<E> implements List<E> {
      *
      * @param index the index of the element to be removed
      * @return the element that was removed from the list
-     * @throws IndexOutOfBoundsException {@inheritDoc}
      */
     @Override
     public E remove(int index) {
+        indexCheck(index);
         final int nextIndex = index + 1;
         final int rightLength = size - index;
-        if (index >= size || index < 0) {
-            throw new IndexOutOfBoundsException("Index: " + index + ", Array size: " + this.size);
-        }
         E value = (E) array[index];
         if (rightLength > 0) {
             System.arraycopy(array, nextIndex, array, index, rightLength);
@@ -162,6 +155,18 @@ public class MyArrayList<E> extends AbstractList<E> implements List<E> {
             array[i] = null;
         }
         size = 0;
+    }
+
+    /**
+     * This method checks that the index is in the range 0 < index < array size
+     *
+     * @param index - the index of the element
+     * @throws IndexOutOfBoundsException {@inheritDoc}
+     */
+    private void indexCheck(int index) {
+        if (index >= size || index < 0) {
+            throw new IndexOutOfBoundsException("Index: " + index + ", Array size: " + this.size);
+        }
     }
 
 }
